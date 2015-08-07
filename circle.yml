@@ -2,9 +2,7 @@ machine:
   services:
     - docker
 
-dependencies:
-  pre:
-    - CGO_ENABLED=0 go build -a -installsuffix nocgo .
+dependencies:  
   override:
     - docker build -t fminzoni/go-docker-simpleapp .
     - docker run -d --name database mongo
