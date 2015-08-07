@@ -6,6 +6,8 @@ import (
   "gopkg.in/mgo.v2/bson"
   "os"
   "time"
+  "log"
+  "net/http"
 )
 
 type Ping struct {
@@ -14,6 +16,25 @@ type Ping struct {
 }
 
 func main() {
+  http.HandleFunc("/", list)
+  http.HandleFunc("/new", add)
+  log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func list(w http.ResponseWriter, r *http.Request) {
+  // get the session using information from environment, ignore errors
+  session, _ := mgo.Dial(os.Getenv("DATABASE_PORT_27017_TCP_ADDR"))
+  db := session.DB(os.Getenv("DB_NAME"))
+  defer session.Close()
+
+  // get all records
+  pings := []Ping{}
+  db.C("pings").Find(nil).All(&pings)
+
+  fmt.Fprint(w, pings)
+}
+
+func add(w http.ResponseWriter, r *http.Request) {
   // get the session using information from environment, ignore errors
   session, _ := mgo.Dial(os.Getenv("DATABASE_PORT_27017_TCP_ADDR"))
   db := session.DB(os.Getenv("DB_NAME"))
@@ -26,9 +47,5 @@ func main() {
   }
   db.C("pings").Insert(ping)
 
-  // get all records
-  pings := []Ping{}
-  db.C("pings").Find(nil).All(&pings)
-
-  fmt.Println(pings)
+  fmt.Fprint(w, ping)
 }
