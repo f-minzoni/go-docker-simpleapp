@@ -4,6 +4,7 @@ machine:
 
 dependencies:
   pre:
+    - go get gopkg.in/mgo.v2
     - CGO_ENABLED=0 go build -a -installsuffix nocgo .  
   override:
     - docker build -t fminzoni/go-docker-simpleapp .
