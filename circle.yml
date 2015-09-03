@@ -2,14 +2,15 @@ machine:
   services:
     - docker
 
-dependencies:  
+dependencies:
+  pre:
+    - CGO_ENABLED=0 go build -a -installsuffix nocgo .  
   override:
     - docker build -t fminzoni/go-docker-simpleapp .
     - docker run -d --name database mongo
     - docker run --link database:database -e DB_NAME=simpleapp-db -p 8080:8080 fminzoni/go-docker-simpleapp:
         background: true
-    - sleep 10
-
+    - sleep 10  
 test:
   override:
     - "curl http://localhost:8080/"
