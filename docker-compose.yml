@@ -1,0 +1,11 @@
+web:
+  image: fminzoni/go-docker-simpleapp
+  environment:
+    - DATABASE_PORT_27017_TCP_ADDR=mongo
+    - DB_NAME=TEST
+  links:
+    - "mongo:mongo"
+  ports:
+    - "8080:8080"
+mongo:
+  image: mongo
