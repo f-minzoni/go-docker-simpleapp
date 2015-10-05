@@ -1,6 +1,2 @@
-# requires statically linked go binary to be compiled
-# to ./go-docker-simpleapp before docker build
-FROM scratch
-COPY go-docker-simpleapp /staticbinary
-ENTRYPOINT ["/staticbinary"]
+FROM golang:onbuild
 EXPOSE 8080
