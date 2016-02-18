@@ -1,11 +1,30 @@
-web:
-  image: fminzoni/go-docker-simpleapp
-  environment:
-    - DATABASE_PORT_27017_TCP_ADDR=mongo
-    - DB_NAME=TEST
-  links:
-    - "mongo:mongo"
-  ports:
-    - "8080:8080"
-mongo:
-  image: mongo
+version: '2'
+
+services:
+  interlock:
+    image: ehazlett/interlock
+    ports:
+      - "80:80"
+    environment:
+      - "constraint:node==mhs-demo0"
+    volumes:
+      - /etc/docker/:/etc/docker
+    command: "--swarm-url tcp://185.48.34.118:3376 --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin haproxy start"
+  web:
+    image: fminzoni/go-docker-simpleapp
+    hostname: demo
+    domainname: interlock.com
+    environment:
+      - DATABASE_PORT_27017_TCP_ADDR=mongo
+      - DB_NAME=TEST
+    ports:
+      - "8080"
+  mongo:
+    image: mongo
+    environment:
+      - "constraint:node==mhs-demo1"
+
+networks:
+  default:
+    # Use the overlay driver for multi-host communication
+    driver: overlay
