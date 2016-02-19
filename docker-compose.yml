@@ -6,10 +6,10 @@ services:
     ports:
       - "80:80"
     environment:
-      - "constraint:node==mhs-demo0"
+      - "constraint:node==node0"
     volumes:
       - /etc/docker/:/etc/docker
-    command: "--swarm-url tcp://185.48.34.118:3376 --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin haproxy start"
+    command: "--swarm-url $DOCKER_HOST --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin haproxy start"
   web:
     image: fminzoni/go-docker-simpleapp
     hostname: demo
@@ -22,7 +22,7 @@ services:
   mongo:
     image: mongo
     environment:
-      - "constraint:node==mhs-demo1"
+      - "constraint:node==node1"
 
 networks:
   default:
