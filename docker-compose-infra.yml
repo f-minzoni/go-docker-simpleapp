@@ -1,0 +1,18 @@
+version: '2'
+
+services:  
+  registrator:
+    container_name: registrator
+    image: gliderlabs/registrator
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: -ip $DOCKER_IP consul://$CONSUL_IP:8500
+
+  proxy:
+    container_name: docker-flow-proxy
+    image: vfarcic/docker-flow-proxy
+    environment:
+      CONSUL_ADDRESS: $CONSUL_IP:8500
+    ports:
+      - 80:80
+      - 8080:8080
